@@ -1,0 +1,27 @@
+from selenium import webdriver
+from openpyxl import load_workbook
+import bs4, time
+
+dirverPath = 'C:\\spider\\chromedriver.exe' #請更改為 chromedriver.exe 的絕對路徑
+Excel = 'C:\\Users\\ASUS\\Desktop\\environment2.xlsx' #請在桌面建立一個 environment2 的 Excel 檔，並設置成該檔案的絕對路徑
+
+
+wb = load_workbook(Excel, data_only = True)
+s1 = wb['工作表1']
+counter = 1
+browser = webdriver.Chrome(executable_path = dirverPath)
+url = 'https://anymeets.com/event/138/agenda'
+browser.get(url)
+time.sleep(5)
+
+objsoup = bs4.BeautifulSoup(browser.page_source, 'lxml')
+articles = objsoup.find_all('div', day = "0")
+
+for article in articles:
+    time = article.find('div', aligncontet = "center")
+    s1["A" + str(counter)].value = time.text
+    counter += 1          
+
+wb.save(Excel)
+print("OK!")
+
